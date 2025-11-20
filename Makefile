@@ -27,6 +27,7 @@ setup: ## Set up the conda environment
 	conda env create -f environment.yml
 	@echo "Setting up pre-commit ..."
 	$(CONDA_ACTIVATE); pre-commit install
+	$(CONDA_ACTIVATE); pre-commit install --hook-type commit-msg
 	@echo "Setup succesfully, activate environment: conda activate $(ENV_NAME)"
 
 update-env: ## Update the conda environment
