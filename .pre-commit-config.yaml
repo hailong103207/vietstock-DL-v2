@@ -1,0 +1,51 @@
+#.pre-commit-config.yaml
+repos:
+  # ------------------------------------------------------------------
+  # 1. STANDARD HOOKS: Standard clean
+  # ------------------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace        # Remove trailing whitespace
+      - id: end-of-file-fixer          # Ensure file ends with a newline
+      - id: check-yaml                 # Check YAML syntax (Important for Hydra config)
+      - id: check-toml                 # Check TOML syntax (pyproject.toml)
+      - id: check-added-large-files    # IMPORTANT FOR ML: Block large files (>500KB)
+        args: ['--maxkb=1000']         # Allow max 1MB (increase if needed, but be careful)
+
+  # ------------------------------------------------------------------
+  # 2. FORMATTERS: Code beautification (Auto-fix code)
+  # ------------------------------------------------------------------
+  # Black: PEP 8 compliant code formatting
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        language_version: python3.12
+
+  # Isort: Reorder imports
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]   # Required to avoid conflict with Black
+
+  # ------------------------------------------------------------------
+  # 3. LINTERS: Quality check (Report logic errors)
+  # ------------------------------------------------------------------
+  # Flake8: Report unused variables, naming errors, syntax
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        # Install additional plugins if needed (e.g., pep8-naming for naming errors)
+        additional_dependencies: [pep8-naming]
+
+  # ------------------------------------------------------------------
+  # 4. COMMIT MSG: Ensure correct commit-msg
+  # ------------------------------------------------------------------
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.13.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]  # <--- REQUIRED: Only run when typing message
