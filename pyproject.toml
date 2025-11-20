@@ -25,3 +25,13 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["vnstock_forecast*"]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+    "pytest-cov",
+]
+dev = [
+    "pre-commit",
+    "vnstock_forecast[test]",
+]

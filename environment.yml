@@ -6,7 +6,6 @@ channels:
 dependencies:
   - python=3.12
   - pytorch
-  - pre-commit
   - ipykernel
   - pip:
-    - -e .
+    - -e .[dev]
