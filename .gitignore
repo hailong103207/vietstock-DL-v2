@@ -3,6 +3,7 @@ data/
 
 # Testing files
 notebooks/test.ipynb
+draft/
 
 # Dev only
 docs/dev_rule
