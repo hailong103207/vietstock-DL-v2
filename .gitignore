@@ -1,3 +1,12 @@
+# data
+data/
+
+# Testing files
+notebooks/test.ipynb
+
+# Dev only
+docs/dev_rule
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -205,9 +214,3 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-
-# Testing files
-notebooks/test.ipynb
-
-# Dev only
-docs/dev_rule
