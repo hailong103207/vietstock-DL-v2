@@ -31,7 +31,11 @@ test = [
     "pytest>=7.0",
     "pytest-cov",
 ]
+lint = [
+    "mypy",
+]
 dev = [
     "pre-commit",
     "vnstock_forecast[test]",
+    "vnstock_forecast[lint]",
 ]
