@@ -40,7 +40,9 @@ repos:
       - id: flake8
         # Install additional plugins if needed (e.g., pep8-naming for naming errors)
         additional_dependencies: [pep8-naming]
-
+        args:
+              - "--max-line-length=88"
+              - "--ignore=E203,E701,E704,W503"
   # ------------------------------------------------------------------
   # 4. COMMIT MSG: Ensure correct commit-msg
   # ------------------------------------------------------------------
