@@ -2,6 +2,8 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
+from vnstock_forecast.utils import time_utils
+
 
 class VietstockClient:
     """
@@ -71,13 +73,39 @@ class VietstockClient:
             print(f"API request failed: {e}")
             return None
 
+    def fetch_realtime(
+        self, ticker: str, from_ts: int, resolution: str, countback: int = 2
+    ) -> dict | None:
+        """
+        Get OHLCV real-time data from Vietstock API.
+        Args:
+            ticker (str): Stock ticker symbol.
+            from_ts (int): Unix timestamp for starting point.
+            resolution (str): Data resolution (e.g., "D" for daily).
+            countback (int): Old param to limit number of data points (no need to use).
+        Returns:
+            dict | None: JSON response from the API or None if request fails.
+        Raise:
+            requests.RequestException: If the API request fails.
+        """
+        to_ts = time_utils.get_current_timestamp()
+        return self.fetch_history(from_ts, to_ts, ticker, resolution, countback)
+
 
 if __name__ == "__main__":
     client = VietstockClient()
     data = client.fetch_history(
-        from_ts=1622505600,  # Example timestamp
-        to_ts=1625097600,  # Example timestamp
+        from_ts=time_utils.add_days_to_timestamp(
+            time_utils.get_current_date_timestamp(), -10
+        ),  # Example timestamp
+        to_ts=time_utils.get_current_date_timestamp(),  # Example timestamp
         ticker="VND",
         resolution="D",
     )
     print(data)
+    data2 = client.fetch_realtime(
+        ticker="VNINDEX",
+        from_ts=time_utils.get_current_date_timestamp(),
+        resolution="5",
+    )
+    print(data2)
