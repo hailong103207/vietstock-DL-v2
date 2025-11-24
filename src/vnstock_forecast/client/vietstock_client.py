@@ -31,7 +31,7 @@ class VietstockClient:
         self.session.mount("https://", adapter)
 
     def fetch_history(
-        self, from_ts: int, to_ts: int, ticker: str, resolution: str
+        self, from_ts: int, to_ts: int, ticker: str, resolution: str, countback: int = 2
     ) -> dict | None:
         """
         Get OHLCV historical data from Vietstock API.
@@ -42,14 +42,18 @@ class VietstockClient:
             resolution (str): Data resolution (e.g., "D" for daily).
             Supported resolutions: "1", "5", "15", "30", "45, "60",
                                     "120", "180", "240", "D", "W", "M"
+            countback (int): Old param to limit number of data points (no need to use).
         Returns:
+            dict | None: JSON response from the API or None if request fails.
+        Raise:
+            requests.RequestException: If the API request fails.
         """
         params = {
             "symbol": ticker,
             "resolution": resolution,
             "from": from_ts,
             "to": to_ts,
-            "countback": 2,
+            "countback": countback,
         }
 
         try:
