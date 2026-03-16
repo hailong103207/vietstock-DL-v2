@@ -1,13 +1,11 @@
-"""vnstock_forecast.forecast.technical – technical analysis module."""
+"""vnstock_forecast.builtin.forecast.technical – technical analysis module."""
 
-from vnstock_forecast.forecast.registry import (
+from vnstock_forecast.builtin.forecast.registry import (
     get_all_techniques,
     get_technique,
     register,
 )
-
-from .base import BaseTechnique
-from .bot import AnalysisBot
+from vnstock_forecast.builtin.forecast.technical import AnalysisBot, BaseTechnique
 
 __all__ = [
     "BaseTechnique",

@@ -32,7 +32,7 @@ Thư mục `user/bots/` dành cho bot do người dùng tự định nghĩa.
 Khi tạo technique mới trong `user/bots/`, đăng ký trực tiếp vào core registry:
 
 1. Import decorator:
-    - `from vnstock_forecast.forecast.technical.registry import register`
+    - `from vnstock_forecast.builtin.forecast.technical.registry import register`
 2. Gắn decorator lên class kế thừa `BaseTechnique`:
     - `@register("ten_technique_duy_nhat")`
 3. Module trong `user/bots/` hiện được runtime auto-load, nên decorator sẽ được thực thi tự động khi hệ thống truy vấn registry.

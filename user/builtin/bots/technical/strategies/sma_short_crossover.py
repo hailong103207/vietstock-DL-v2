@@ -6,11 +6,11 @@ from typing import Any, Optional
 
 import pandas as pd
 
+from vnstock_forecast.builtin.forecast.registry import register
+from vnstock_forecast.builtin.forecast.signal import Signal, SignalDirection, TradePlan
+from vnstock_forecast.builtin.forecast.technical import BaseTechnique
 from vnstock_forecast.engine.backtest.context import StepContext
-from vnstock_forecast.forecast.registry import register
-from vnstock_forecast.forecast.signal import Signal, SignalDirection, TradePlan
 
-from ..base import BaseTechnique
 from ..confirmations import (
     apply_confirmations,
     check_breakout_resistance,
@@ -74,7 +74,7 @@ class SMAShortCrossover(BaseTechnique):
     ) -> None:
         if short_period >= long_period:
             raise ValueError(
-                f"short_period ({short_period}) phải nhỏ hơn long_period ({long_period})."  # noqa E501
+                f"short_period ({short_period}) phải nhỏ hơn long_period ({long_period})."  # noqa: E501
             )
         self.short_period = short_period
         self.long_period = long_period
@@ -107,7 +107,9 @@ class SMAShortCrossover(BaseTechnique):
         short_overlay = sma_overlays(df["Close"], self.short_period, color="#FF9800")
         long_overlay = sma_overlays(df["Close"], self.long_period, color="#2196F3")
         # Gộp indicator lists
-        from vnstock_forecast.forecast.visualization.snapshot import PlotOverlays
+        from vnstock_forecast.builtin.forecast.visualization.snapshot import (
+            PlotOverlays,
+        )
 
         return PlotOverlays(
             indicators=short_overlay.indicators + long_overlay.indicators

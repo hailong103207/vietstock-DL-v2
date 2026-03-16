@@ -6,11 +6,11 @@ from typing import Any
 
 import pandas as pd
 
+from vnstock_forecast.builtin.forecast.registry import register
+from vnstock_forecast.builtin.forecast.signal import Signal, SignalDirection, TradePlan
+from vnstock_forecast.builtin.forecast.technical import BaseTechnique
 from vnstock_forecast.engine.backtest.context import StepContext
-from vnstock_forecast.forecast.registry import register
-from vnstock_forecast.forecast.signal import Signal, SignalDirection, TradePlan
 
-from ..base import BaseTechnique
 from ..indicators.rsi import compute_rsi, rsi_overlays
 
 

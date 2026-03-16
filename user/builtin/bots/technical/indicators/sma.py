@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from vnstock_forecast.forecast.visualization.snapshot import PlotOverlays
+from vnstock_forecast.builtin.forecast.visualization.snapshot import PlotOverlays
 
 
 def compute_sma(closes: pd.Series, period: int = 20) -> pd.Series:
@@ -40,7 +40,7 @@ def sma_overlays(
     Returns:
         ``PlotOverlays`` chứa SMA line.
     """
-    from vnstock_forecast.forecast.visualization.snapshot import (
+    from vnstock_forecast.builtin.forecast.visualization.snapshot import (
         IndicatorLine,
         PlotOverlays,
     )
