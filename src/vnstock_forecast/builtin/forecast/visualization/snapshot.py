@@ -176,8 +176,11 @@ class SignalSnapshot:
     Attributes:
         ohlcv:       DataFrame OHLCV (DatetimeIndex, cột OHLCV).
         entry:       Giá vào lệnh.
+        entry_time:  Thời điểm vào lệnh.
         stop_loss:   Giá cắt lỗ.
         take_profit: Giá chốt lời.
+        exit_price:  Giá thoát lệnh (nếu đã có).
+        exit_time:   Thời điểm thoát lệnh (nếu đã có).
         signal_time: Thời điểm phát signal.
         time_limit:  Deadline vị thế (query thêm dữ liệu để xem kết quả).
         resolution:  Resolution OHLCV (``"D"``, ``"60"``, …).
@@ -191,8 +194,11 @@ class SignalSnapshot:
 
     ohlcv: pd.DataFrame
     entry: Optional[float] = None
+    entry_time: Optional[datetime] = None
     stop_loss: Optional[float] = None
     take_profit: Optional[float] = None
+    exit_price: Optional[float] = None
+    exit_time: Optional[datetime] = None
     signal_time: Optional[datetime] = None
     time_limit: Optional[datetime] = None
     resolution: str = "D"

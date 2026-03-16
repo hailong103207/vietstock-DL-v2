@@ -1,6 +1,5 @@
-"""vnstock_forecast.forecast.visualization – plot & persist signals."""
+"""vnstock_forecast.builtin.forecast.visualization – plot & persist signals."""
 
-from .pdf_report import PDFProfileReport
 from .plotter import plot_signal
 from .snapshot import (
     HLine,
@@ -29,3 +28,11 @@ __all__ = [
     # PDF Report
     "PDFProfileReport",
 ]
+
+
+def __getattr__(name: str):
+    if name == "PDFProfileReport":
+        from .pdf_report import PDFProfileReport
+
+        return PDFProfileReport
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

@@ -6,9 +6,10 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional
+from uuid import uuid4
 
 if TYPE_CHECKING:
-    from vnstock_forecast.forecast.visualization.snapshot import SignalSnapshot
+    from vnstock_forecast.builtin.forecast.visualization.snapshot import SignalSnapshot
 
 
 class SignalDirection(Enum):
@@ -91,6 +92,8 @@ class Signal:
         reason:      Mô tả lý do tín hiệu.
         tags:        Nhãn tùy chọn (vd: ``{"divergence", "oversold"}``).
         metadata:    Dữ liệu bổ sung tùy ý.
+        signal_id:   ID duy nhất của signal để trace với actions.
+        action_ids:  Danh sách action IDs liên quan đến signal.
         snapshot:    Snapshot dữ liệu trực quan (OHLCV + overlays) để plot.
     """
 
@@ -103,6 +106,8 @@ class Signal:
     reason: str = ""
     tags: set[str] = field(default_factory=set)
     metadata: dict[str, Any] = field(default_factory=dict)
+    signal_id: str = field(default_factory=lambda: uuid4().hex[:12])
+    action_ids: list[str] = field(default_factory=list)
     snapshot: Optional[SignalSnapshot] = None
 
     def __post_init__(self) -> None:
@@ -111,7 +116,15 @@ class Signal:
             raise ValueError(
                 "Tín hiệu BUY bắt buộc phải có TradePlan (entry / SL / TP)."
             )
+        if not self.signal_id:
+            self.signal_id = uuid4().hex[:12]
         self.confidence = max(0.0, min(1.0, self.confidence))
+        self.metadata.setdefault("signal_id", self.signal_id)
+
+    def attach_action(self, action_id: str) -> None:
+        """Gắn một ``action_id`` vào signal (không duplicate)."""
+        if action_id and action_id not in self.action_ids:
+            self.action_ids.append(action_id)
 
     @property
     def is_buy(self) -> bool:

@@ -13,7 +13,7 @@ import pandas as pd
 from .snapshot import SignalSnapshot
 
 if TYPE_CHECKING:
-    from vnstock_forecast.forecast.signal import Signal
+    from vnstock_forecast.builtin.forecast.signal import Signal
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +21,13 @@ logger = logging.getLogger(__name__)
 # ======================================================================
 #  Helpers
 # ======================================================================
+
+
+def _is_non_interactive_backend() -> bool:
+    """Kiểm tra backend matplotlib hiện tại có non-interactive không."""
+    backend = (plt.get_backend() or "").lower()
+    non_interactive_tokens = ("agg", "pdf", "ps", "svg", "cairo", "template")
+    return any(token in backend for token in non_interactive_tokens)
 
 
 def _ensure_datetime_index(df: pd.DataFrame) -> pd.DataFrame:
@@ -41,12 +48,38 @@ def _ts_to_bar_idx(ohlcv: pd.DataFrame, ts: pd.Timestamp) -> int:
     return int(diffs.argmin())
 
 
-def _extend_ohlcv(snapshot: SignalSnapshot, extend_bars: int) -> pd.DataFrame:
-    """Query thêm *extend_bars* bars OHLCV của *snapshot* kể từ bar cuối cùng.
+def _infer_bar_seconds(ohlcv: pd.DataFrame, resolution: str) -> int:
+    """Ước lượng độ dài 1 bar (giây)."""
+    if len(ohlcv.index) >= 2:
+        diffs = pd.Series(ohlcv.index).diff().dropna().dt.total_seconds()
+        if not diffs.empty:
+            return max(int(diffs.median()), 1)
+
+    res = (resolution or "").upper()
+    if res == "D":
+        return 24 * 60 * 60
+    if res == "W":
+        return 7 * 24 * 60 * 60
+    if res == "M":
+        return 30 * 24 * 60 * 60
+    try:
+        return max(int(res) * 60, 1)
+    except Exception:
+        return 24 * 60 * 60
+
+
+def _extend_ohlcv(
+    snapshot: SignalSnapshot,
+    *,
+    until_ts: Optional[pd.Timestamp] = None,
+    extend_bars: int = 0,
+) -> pd.DataFrame:
+    """Query thêm OHLCV kể từ bar cuối cùng, có thể ép mở rộng tới mốc thời gian.
 
     Args:
         snapshot:     ``SignalSnapshot`` nguồn.
-        extend_bars:  Số bars tối đa muốn lấy thêm (> 0).
+        until_ts:     Mốc cần phủ tới (ví dụ thời điểm thoát lệnh).
+        extend_bars:  Số bars lấy thêm sau khi đã phủ ``until_ts``.
 
     Returns:
         DataFrame OHLCV đã nối thêm dữ liệu (hoặc nguyên bản nếu thất bại).
@@ -55,14 +88,27 @@ def _extend_ohlcv(snapshot: SignalSnapshot, extend_bars: int) -> pd.DataFrame:
 
     ohlcv = _ensure_datetime_index(snapshot.ohlcv)
 
+    if ohlcv.empty:
+        return ohlcv
+
+    bar_seconds = _infer_bar_seconds(ohlcv, snapshot.resolution)
     last_ts = int(ohlcv.index[-1].timestamp())
-    extend_ts = (ohlcv.index[1] - ohlcv.index[0]).total_seconds() * (extend_bars - 1)
+
+    target_ts = last_ts
+    if until_ts is not None:
+        target_ts = max(target_ts, int(until_ts.timestamp()))
+    if extend_bars > 0:
+        target_ts += bar_seconds * extend_bars
+
+    if target_ts <= last_ts:
+        return ohlcv
+
     try:
         extra = query_ohlcv(
             symbols=snapshot.symbol,
             resolutions=snapshot.resolution,
             from_ts=last_ts,
-            to_ts=last_ts + int(extend_ts),
+            to_ts=target_ts,
         )
     except Exception as exc:
         logger.warning("Không thể query thêm dữ liệu: %s", exc)
@@ -89,7 +135,7 @@ def _extend_ohlcv(snapshot: SignalSnapshot, extend_bars: int) -> pd.DataFrame:
 def plot_signal(
     signal_or_snapshot: "Signal | SignalSnapshot",
     *,
-    extend_bars: Optional[int] = 40,
+    extend_bars: Optional[int] = 15,
     figsize: tuple[int, int] = (16, 10),
     style: str = "charles",
     title: str | None = None,
@@ -108,15 +154,15 @@ def plot_signal(
     * Mũi tên đánh dấu thời điểm phát signal.
     * Đường time-limit nếu có.
 
-    Nếu ``extend_bars`` là số nguyên dương, hàm sẽ tự động query thêm
-    *N* bars OHLCV tiếp theo qua ``engine.data.query`` để hiển thị diễn
-    biến giá sau signal.
+    Nếu có dữ liệu thoát lệnh (``exit_time``), hàm tự động mở rộng dữ liệu
+    đến bar thoát lệnh trước; sau đó nếu ``extend_bars`` > 0 sẽ query thêm
+    tối đa *N* bars tiếp theo qua ``engine.data.query``.
 
     Args:
         signal_or_snapshot: Đối tượng ``Signal`` (cần có ``snapshot``) hoặc
                             ``SignalSnapshot`` trực tiếp.
-        extend_bars:        Số bars muốn mở rộng thêm sau bar cuối.
-                            ``None`` (mặc định) → không query thêm.
+        extend_bars:        Số bars muốn mở rộng thêm sau khi đã phủ
+                    tới điểm thoát (nếu có). ``None`` → không thêm.
         figsize:            Kích thước figure ``(width, height)``.
         style:              mplfinance style (charles, yahoo, nightclouds…).
         title:              Tiêu đề. ``None`` → tự sinh từ symbol.
@@ -140,10 +186,32 @@ def plot_signal(
                 "trên technique trước khi chạy."
             )
 
+    entry_time = snapshot.entry_time or snapshot.signal_time
+    entry_price = snapshot.entry
+    exit_time = snapshot.exit_time
+    exit_price = snapshot.exit_price
+
+    if not isinstance(signal_or_snapshot, SignalSnapshot):
+        metadata = getattr(signal_or_snapshot, "metadata", {})
+        if isinstance(metadata, dict):
+            if entry_time is None and metadata.get("entry_time") is not None:
+                entry_time = pd.Timestamp(metadata["entry_time"]).to_pydatetime()
+            if entry_price is None and metadata.get("entry_price") is not None:
+                entry_price = float(metadata["entry_price"])
+            if exit_time is None and metadata.get("exit_time") is not None:
+                exit_time = pd.Timestamp(metadata["exit_time"]).to_pydatetime()
+            if exit_price is None and metadata.get("exit_price") is not None:
+                exit_price = float(metadata["exit_price"])
+
     # --- 1) OHLCV ---
     ohlcv = _ensure_datetime_index(snapshot.ohlcv)
-    if extend_bars is not None and extend_bars > 0:
-        ohlcv = _extend_ohlcv(snapshot, extend_bars)
+
+    if exit_time is not None or (extend_bars is not None and extend_bars > 0):
+        ohlcv = _extend_ohlcv(
+            snapshot,
+            until_ts=(pd.Timestamp(exit_time) if exit_time is not None else None),
+            extend_bars=(extend_bars or 0),
+        )
 
     ohlcv_cols = [
         c for c in ("Open", "High", "Low", "Close", "Volume") if c in ohlcv.columns
@@ -205,26 +273,36 @@ def plot_signal(
     if snapshot.signal_time is not None:
         signal_idx = _ts_to_bar_idx(ohlcv, pd.Timestamp(snapshot.signal_time))
 
-    # --- 4) Entry / SL / TP (start from signal bar, extend to last bar) ---
-    sig_x: int = signal_idx if signal_idx is not None else 0
-    n_bar: int = len(ohlcv) - 1
+    entry_idx: int | None = None
+    if entry_time is not None:
+        entry_idx = _ts_to_bar_idx(ohlcv, pd.Timestamp(entry_time))
 
-    if snapshot.entry is not None:
+    exit_idx: int | None = None
+    if exit_time is not None:
+        exit_idx = _ts_to_bar_idx(ohlcv, pd.Timestamp(exit_time))
+
+    # --- 4) Entry / SL / TP (start from entry/signal bar) ---
+    sig_x: int = entry_idx if entry_idx is not None else (signal_idx or 0)
+    n_bar: int = len(ohlcv) - 1
+    line_end: int = exit_idx if exit_idx is not None else n_bar
+    line_end = max(sig_x, min(line_end, n_bar))
+
+    if entry_price is not None:
         ax_main.hlines(
-            snapshot.entry,
+            entry_price,
             sig_x,
-            n_bar,
+            line_end,
             colors="#2196F3",
             linestyles="-",
             linewidth=1.6,
-            label=f"Entry {snapshot.entry:,.0f}",
+            label=f"Entry {entry_price:,.0f}",
             alpha=0.9,
         )
     if snapshot.stop_loss is not None:
         ax_main.hlines(
             snapshot.stop_loss,
             sig_x,
-            n_bar,
+            line_end,
             colors="#F44336",
             linestyles="--",
             linewidth=1.4,
@@ -235,7 +313,7 @@ def plot_signal(
         ax_main.hlines(
             snapshot.take_profit,
             sig_x,
-            n_bar,
+            line_end,
             colors="#4CAF50",
             linestyles="--",
             linewidth=1.4,
@@ -244,28 +322,74 @@ def plot_signal(
         )
 
     # Tô vùng risk / reward (chỉ từ thời điểm signal)
-    x_fill = list(range(sig_x, n_bar + 1))
-    if snapshot.entry is not None and snapshot.stop_loss is not None:
-        sl_lo = min(snapshot.entry, snapshot.stop_loss)
-        sl_hi = max(snapshot.entry, snapshot.stop_loss)
+    x_fill = list(range(sig_x, line_end + 1))
+    if entry_price is not None and snapshot.stop_loss is not None:
+        sl_lo = min(entry_price, snapshot.stop_loss)
+        sl_hi = max(entry_price, snapshot.stop_loss)
         ax_main.fill_between(x_fill, sl_lo, sl_hi, alpha=0.06, color="red")
-    if snapshot.entry is not None and snapshot.take_profit is not None:
-        tp_lo = min(snapshot.entry, snapshot.take_profit)
-        tp_hi = max(snapshot.entry, snapshot.take_profit)
+    if entry_price is not None and snapshot.take_profit is not None:
+        tp_lo = min(entry_price, snapshot.take_profit)
+        tp_hi = max(entry_price, snapshot.take_profit)
         ax_main.fill_between(x_fill, tp_lo, tp_hi, alpha=0.06, color="green")
 
-    # --- 5) Signal marker ---
-    if snapshot.signal_time is not None and signal_idx is not None:
-        if snapshot.entry is not None:
-            ax_main.annotate(
-                " SIGNAL",
-                xy=(signal_idx, snapshot.entry),
-                xytext=(max(0, signal_idx - 3), snapshot.entry * 1.015),
-                fontsize=9,
-                fontweight="bold",
-                color="#2196F3",
-                arrowprops=dict(arrowstyle="->", color="#2196F3", lw=1.5),
-            )
+    # --- 5) BUY/SELL markers ---
+    if entry_idx is not None and entry_price is not None:
+        ax_main.scatter(
+            [entry_idx],
+            [entry_price],
+            marker="^",
+            s=85,
+            color="#1E88E5",
+            edgecolors="white",
+            linewidths=0.7,
+            zorder=6,
+            label="Buy",
+        )
+        ax_main.annotate(
+            " BUY",
+            xy=(entry_idx, entry_price),
+            xytext=(max(0, entry_idx - 2), entry_price * 1.012),
+            fontsize=8,
+            fontweight="bold",
+            color="#1E88E5",
+            arrowprops=dict(arrowstyle="->", color="#1E88E5", lw=1.2),
+        )
+
+    if exit_idx is not None and exit_price is not None:
+        ax_main.scatter(
+            [exit_idx],
+            [exit_price],
+            marker="v",
+            s=85,
+            color="#E53935",
+            edgecolors="white",
+            linewidths=0.7,
+            zorder=6,
+            label="Sell",
+        )
+        ax_main.annotate(
+            " SELL",
+            xy=(exit_idx, exit_price),
+            xytext=(max(0, exit_idx - 2), exit_price * 0.988),
+            fontsize=8,
+            fontweight="bold",
+            color="#E53935",
+            arrowprops=dict(arrowstyle="->", color="#E53935", lw=1.2),
+        )
+    elif (
+        snapshot.signal_time is not None
+        and signal_idx is not None
+        and entry_price is not None
+    ):
+        ax_main.annotate(
+            " SIGNAL",
+            xy=(signal_idx, entry_price),
+            xytext=(max(0, signal_idx - 3), entry_price * 1.015),
+            fontsize=9,
+            fontweight="bold",
+            color="#2196F3",
+            arrowprops=dict(arrowstyle="->", color="#2196F3", lw=1.5),
+        )
 
     # --- 6) Time-limit vertical ---
     if snapshot.time_limit is not None:
@@ -348,6 +472,12 @@ def plot_signal(
     if savefig:
         fig.savefig(savefig, dpi=150, bbox_inches="tight")
     if show:
-        plt.show()
+        if _is_non_interactive_backend():
+            logger.info(
+                "Bỏ qua plt.show() vì matplotlib backend '%s' là non-interactive.",
+                plt.get_backend(),
+            )
+        else:
+            plt.show()
 
     return fig

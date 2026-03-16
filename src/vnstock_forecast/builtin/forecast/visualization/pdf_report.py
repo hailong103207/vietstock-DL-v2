@@ -9,7 +9,7 @@ Sử dụng matplotlib PdfPages backend để tạo PDF nhiều trang bao gồm:
 
 Usage::
 
-    from vnstock_forecast.forecast.visualization.pdf_report import PDFProfileReport
+    from vnstock_forecast.builtin.forecast.visualization.pdf_report import PDFProfileReport
 
     report = PDFProfileReport(
         technique_name="SMA_Crossover",
@@ -29,19 +29,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
-matplotlib.use("Agg")  # Non-interactive backend for PDF generation
-
-
 if TYPE_CHECKING:
+    from vnstock_forecast.builtin.forecast.profile import SignalProfile
+    from vnstock_forecast.builtin.forecast.signal import Signal
     from vnstock_forecast.engine.backtest.report import BacktestReport
-    from vnstock_forecast.forecast.profile import SignalProfile
-    from vnstock_forecast.forecast.signal import Signal
 
 logger = logging.getLogger(__name__)
 
@@ -847,7 +843,7 @@ class PDFProfileReport:
         if not self.signals:
             return
 
-        from vnstock_forecast.forecast.visualization.plotter import plot_signal
+        from vnstock_forecast.builtin.forecast.visualization.plotter import plot_signal
 
         # Chỉ lấy signals có snapshot
         signals_with_snap = [s for s in self.signals if s.snapshot is not None]

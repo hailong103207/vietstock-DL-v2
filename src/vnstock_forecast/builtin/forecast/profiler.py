@@ -4,7 +4,7 @@ tính toán SignalProfile, lưu ra local.
 
 Usage::
 
-    from vnstock_forecast.forecast.profiler import Profiler
+    from vnstock_forecast.builtin.forecast.profiler import Profiler
 
     profiler = Profiler()
     profiles = profiler.run(
@@ -21,7 +21,7 @@ Usage::
     profiler.save()
 
     # Hoặc profile technique cụ thể
-    from vnstock_forecast.forecast.strategies import RSICrossover
+    from vnstock_forecast.builtin.forecast.strategies import RSICrossover
     profiler.run_single(
         technique=RSICrossover(period=14),
         data={"VNM": df_vnm},
@@ -38,9 +38,9 @@ from typing import Any, Optional, Protocol
 
 import pandas as pd
 
+from vnstock_forecast.builtin.forecast.technical.bot import AnalysisBot  # noqa: F401
 from vnstock_forecast.engine.backtest.bot_base import Action  # noqa: F401
 from vnstock_forecast.engine.backtest.bot_base import ActionType  # noqa: F401
-from vnstock_forecast.engine.backtest.bot_base import BotBase
 from vnstock_forecast.engine.backtest.context import StepContext  # noqa: F401
 from vnstock_forecast.engine.backtest.engine import BacktestEngine
 from vnstock_forecast.engine.backtest.portfolio import CloseReason
@@ -67,7 +67,7 @@ class TechniqueLike(Protocol):
     def analyze_step(self, ctx: StepContext, symbol: str) -> list[Signal]: ...
 
 
-class _ProfilerTechniqueBot(BotBase):
+class _ProfilerTechniqueBot(AnalysisBot):
     """Internal bot wrapper used by profiler for one technique."""
 
     def __init__(
@@ -78,82 +78,19 @@ class _ProfilerTechniqueBot(BotBase):
         sl_pct: float = 0.07,
         tp_pct: float = 0.10,
     ) -> None:
+        super().__init__(
+            name=name,
+            description="Profiler internal single-technique bot",
+            techniques=[technique],
+            allocation=allocation,
+            sl_pct=sl_pct,
+            tp_pct=tp_pct,
+            profiles=None,
+        )
         self.technique = technique
-        self.name = name
-        self.description = "Profiler internal single-technique bot"
-        self.allocation = allocation
-        self.sl_pct = sl_pct
-        self.tp_pct = tp_pct
-        self.signal_history: list[Signal] = []
 
     def on_step(self, ctx: StepContext) -> list[Action]:
-        actions: list[Action] = []
-
-        for symbol in ctx.symbols:
-            try:
-                signals = self.technique.analyze_step(ctx, symbol)
-            except Exception as exc:
-                logger.warning(
-                    "[%s] %s.analyze_step(%s) lỗi: %s",
-                    ctx.timestamp,
-                    self.technique.name,
-                    symbol,
-                    exc,
-                )
-                continue
-
-            min_conf = float(getattr(self.technique, "min_confidence", 0.0))
-            for signal in signals:
-                if signal.confidence < min_conf:
-                    continue
-
-                if signal.is_buy:
-                    if ctx.has_position(signal.symbol):
-                        continue
-
-                    price = ctx.price(signal.symbol)
-                    if signal.trade_plan:
-                        stop_loss = signal.trade_plan.stop_loss
-                        take_profit = signal.trade_plan.take_profit
-                    else:
-                        stop_loss = round(price * (1 - self.sl_pct), 2)
-                        take_profit = round(price * (1 + self.tp_pct), 2)
-
-                    qty = int(ctx.cash * self.allocation * signal.confidence // price)
-                    if qty <= 0:
-                        continue
-
-                    actions.append(
-                        Action(
-                            type=ActionType.BUY,
-                            symbol=signal.symbol,
-                            quantity=qty,
-                            stop_loss=stop_loss,
-                            take_profit=take_profit,
-                            reason=f"[{signal.technique}] {signal.reason}",
-                        )
-                    )
-                    self.signal_history.append(signal)
-
-                elif signal.is_sell:
-                    sellable = ctx.sellable_positions(signal.symbol)
-                    if not sellable:
-                        continue
-                    sellable.sort(key=lambda p: p.entry_time)
-
-                    for pos in sellable:
-                        actions.append(
-                            Action(
-                                type=ActionType.SELL,
-                                symbol=signal.symbol,
-                                quantity=pos.quantity,
-                                position_id=pos.id,
-                                reason=f"[{signal.technique}] {signal.reason}",
-                            )
-                        )
-                    self.signal_history.append(signal)
-
-        return actions
+        return super().on_step(ctx)
 
 
 @dataclass
@@ -164,7 +101,7 @@ class ProfileResult:
     report: BacktestReport
     signals: list[Signal]
     technique: Any
-    bot: BotBase
+    bot: AnalysisBot
 
 
 class Profiler:
@@ -294,7 +231,7 @@ class Profiler:
         bot = _ProfilerTechniqueBot(
             technique=technique,
             name=f"Profiler_{technique.name}",
-            allocation=0.1,
+            allocation=0.3,
         )
 
         # Chạy backtest
@@ -430,7 +367,7 @@ class Profiler:
     def _compute_profile(
         self,
         technique: Any,
-        bot: BotBase,
+        bot: AnalysisBot,
         report: BacktestReport,
         data: dict[str, pd.DataFrame],
     ) -> SignalProfile:
