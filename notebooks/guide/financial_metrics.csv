@@ -1,0 +1,368 @@
+statement,metric,description
+balance_sheet,accounts_receivable,Các khoản phải thu
+balance_sheet,accrued_expenses,Chi phí phải trả
+balance_sheet,accumulated_depreciation,Khấu hao lũy kế tài sản thuê tài chính
+balance_sheet,accumulated_depreciation,Khấu hao lũy kế tài sản đầu tư
+balance_sheet,accumulated_depreciation,Khấu hao lũy kế TSCĐ vô hình
+balance_sheet,accumulated_depreciation,Khấu hao lũy kế TSCĐ hữu hình
+balance_sheet,advances_from_customers,Người mua trả tiền trước
+balance_sheet,beginning_accumulated_undistributed_earnings,LNST chưa phân phối lũy kế đến cuối kỳ trước
+balance_sheet,bonus_and_welfare_funds,"Quỹ khen thưởng, phúc lợi"
+balance_sheet,bonus_and_welfare_funds_(before_2010),"Quỹ khen thưởng, phúc lợi (trước 2010)"
+balance_sheet,budget_sources_and_other_funds,Vốn Ngân sách nhà nước và quỹ khác
+balance_sheet,budget_sources_and_other_funds,Vốn ngân sách nhà nước và quỹ khác
+balance_sheet,capital_and_reserves,Vốn và các quỹ
+balance_sheet,cash,Tiền
+balance_sheet,cash_and_cash_equivalents,Tiền và tương đương tiền
+balance_sheet,cash_equivalents,Các khoản tương đương tiền
+balance_sheet,common_shares,Cổ phiếu phổ thông
+balance_sheet,construction_contract_in_progress_payables,Phải trả về xây dựng cơ bản
+balance_sheet,construction_contract_in_progress_receivables,Phải thu hợp đồng xây dựng đang thực hiện
+balance_sheet,construction_in_progress,Xây dựng cơ bản đang dở dang
+balance_sheet,construction_in_progress_(before_2015),Xây dựng cơ bản đang dang dở (trước 2015)
+balance_sheet,conversion_options_on_convertible_bonds,Quyền chọn chuyển đổi trái phiếu
+balance_sheet,convertible_bonds,Trái phiếu chuyển đổi
+balance_sheet,cost,Nguyên giá TSCĐ hữu hình
+balance_sheet,cost,Nguyên giá TSCĐ vô hình
+balance_sheet,cost,Nguyên giá tài sản đầu tư
+balance_sheet,cost,Nguyên giá tài sản thuê tài chính
+balance_sheet,current_assets,TÀI SẢN NGẮN HẠN
+balance_sheet,current_liabilities,Nợ ngắn hạn
+balance_sheet,current_period_undistributed_earnings,LNST chưa phân phối kỳ này
+balance_sheet,deferred_income_tax_assets,Thuế thu nhập hoãn lại
+balance_sheet,deferred_income_tax_liabilities,Thuế thu nhập hoãn lại
+balance_sheet,deferred_revenue,Doanh thu chưa thực hiện
+balance_sheet,differences_upon_asset_revaluation,Chênh lệch đánh giá lại tài sản
+balance_sheet,enterprise_arrangement_fund,Quỹ hỗ trợ sắp xếp doanh nghiệp
+balance_sheet,finance_lease_assets,GTCL tài sản thuê tài chính
+balance_sheet,financial_reserve_funds,Quỹ dự phòng tài chính
+balance_sheet,fixed_assets,Tài sản cố định
+balance_sheet,foreign_exchange_differences,Chênh lệch tỷ giá
+balance_sheet,funds_used_for_fixed_asset_acquisitions,Nguồn kinh phí đã hình thành TSCĐ
+balance_sheet,goodwill,Lợi thế thương mại
+balance_sheet,goodwill_(before_2015),Lợi thế thương mại (trước 2015)
+balance_sheet,government_bonds_purchased_for_resale,Giao dịch mua bán lại trái phiếu Chính phủ
+balance_sheet,government_bonds_purchased_for_resale,Giao dịch mua bán lại trái phiếu chính phủ
+balance_sheet,held-to-maturity_investment,Đầu tư nắm giữ đến ngày đáo hạn
+balance_sheet,intangible_fixed_assets,GTCL tài sản cố định vô hình
+balance_sheet,intercompany_payables,Phải trả nội bộ
+balance_sheet,intercompany_receivables,Phải thu nội bộ
+balance_sheet,intra-company_payables_for_operating_capital_received,Phải trả nội bộ về vốn kinh doanh
+balance_sheet,inventories,Hàng tồn kho
+balance_sheet,"inventories,_net","Hàng tồn kho, ròng"
+balance_sheet,investment_and_development_funds,Quỹ đầu tư và phát triển
+balance_sheet,investment_properties,Giá trị ròng tài sản đầu tư
+balance_sheet,investments_in_associates,Đầu tư vào các công ty liên kết
+balance_sheet,investments_in_subsidiaries,Đầu tư vào các công ty con
+balance_sheet,liabilities,NỢ PHẢI TRẢ
+balance_sheet,long-term_accrued_expenses,Chi phí phải trả dài hạn
+balance_sheet,long-term_advances_from_customers,Người mua trả tiền trước dài hạn
+balance_sheet,long-term_assets,TÀI SẢN DÀI HẠN
+balance_sheet,long-term_borrowings,Vay dài hạn
+balance_sheet,long-term_cost_of_work_in_progress,"Chi phí sản xuất, kinh doanh dở dang dài hạn"
+balance_sheet,"long-term_equipment,_material_and_spare_parts","Thiết bị, vật tư, phụ tùng thay thế dài hạn"
+balance_sheet,long-term_incomplete_assets,Tài sản dở dang dài hạn
+balance_sheet,long-term_intercompany_payables,Phải trả nội bộ dài hạn
+balance_sheet,long-term_intercompany_receivables,Phải thu nội bộ dài hạn
+balance_sheet,long-term_investments,Đầu tư dài hạn
+balance_sheet,long-term_liabilities,Nợ dài hạn
+balance_sheet,long-term_loans_receivables,Phải thu cho vay dài hạn
+balance_sheet,long-term_prepayments,Trả trước dài hạn
+balance_sheet,long-term_prepayments_to_suppliers,Trả trước người bán dài hạn
+balance_sheet,long-term_trade_payables,Phải trả nhà cung cấp dài hạn
+balance_sheet,long-term_trade_receivables,Phải thu dài hạn
+balance_sheet,long-term_trade_receivables_from_customers,Phải thu khách hàng dài hạn
+balance_sheet,minority_interests,Lợi ích cổ đông không kiểm soát
+balance_sheet,minority_interests_(before_2015),Lợi ích của cổ đông thiểu số
+balance_sheet,other_current_assets,Tài sản lưu động khác
+balance_sheet,other_funds,Quỹ khác
+balance_sheet,other_long-term_assets,Các tài sản dài hạn khác
+balance_sheet,other_long-term_assets,Tài sản dài hạn khác
+balance_sheet,other_long-term_investments,Đầu tư dài hạn khác
+balance_sheet,other_long-term_payables,Phải trả dài hạn khác
+balance_sheet,other_long-term_receivables,Phải thu dài hạn khác
+balance_sheet,other_payables,Phải trả khác
+balance_sheet,other_receivables,Phải thu khác
+balance_sheet,other_taxes_receivable,Phải thu thuế khác
+balance_sheet,owner's_equity,Vốn chủ sở hữu
+balance_sheet,owner's_other_capital,Vốn khác
+balance_sheet,paid-in_capital,Vốn góp
+balance_sheet,paid-in_capital_in_wholly-owned_subsidiaries,Vốn kinh doanh ở các đơn vị trực thuộc
+balance_sheet,payable_to_employees,Phải trả người lao động
+balance_sheet,preferred_shares,Cổ phiếu ưu đãi
+balance_sheet,prepayments_to_suppliers,Trả trước người bán
+balance_sheet,price_stabilization_fund,Quỹ bình ổn giá
+balance_sheet,provision_for_decline_in_inventories,Dự phòng giảm giá hàng tồn kho
+balance_sheet,provision_for_diminution,Dự phòng giảm giá
+balance_sheet,provision_for_doubtful_debts,Dự phòng nợ khó đòi
+balance_sheet,provision_for_doubtful_lt_receivable,Dự phòng phải thu dài hạn
+balance_sheet,provision_for_long-term_investments,Dự phòng giảm giá đầu tư dài hạn
+balance_sheet,provision_for_long-term_liabilities,Dự phòng các khoản nợ dài hạn
+balance_sheet,provision_for_severance_allowances,Dự phòng trợ cấp thôi việc
+balance_sheet,provision_for_st_liabilities,Dự phòng các khoản phải trả ngắn hạn
+balance_sheet,share_premium,Thặng dư vốn cổ phần
+balance_sheet,short-term_borrowings,Vay ngắn hạn
+balance_sheet,short-term_investments,Đầu tư ngắn hạn
+balance_sheet,short-term_loans_receivables,Phải thu cho vay ngắn hạn
+balance_sheet,short-term_prepayments,Chi phí trả trước ngắn hạn
+balance_sheet,short-term_unrealized_revenue,Doanh thu chưa thực hiện ngắn hạn
+balance_sheet,shortage_of_current_assets_waiting_for_solution,Tài sản thiếu cần xử lý
+balance_sheet,tangible_fixed_assets,GTCL TSCĐ hữu hình
+balance_sheet,taxes_and_other_payable_to_state_budget,Thuế và các khoản phải trả Nhà nước
+balance_sheet,technology-science_development_fund,Quỹ phát triển khoa học công nghệ
+balance_sheet,total_assets,TỔNG CỘNG TÀI SẢN
+balance_sheet,total_resource,Tổng cộng nguồn vốn
+balance_sheet,trade_accounts_payable,Phải trả người bán
+balance_sheet,trade_accounts_receivable,Phải thu khách hàng
+balance_sheet,treasury_shares,Cổ phiếu quỹ
+balance_sheet,undistributed_earnings,Lãi chưa phân phối
+balance_sheet,vat_to_be_claimed,Thuế GTGT được khấu trừ
+cash_flow,(increase)/decrease_in_inventories,(Tăng)/giảm hàng tồn kho
+cash_flow,(increase)/decrease_in_prepaid_expenses,(Tăng)/giảm chi phí trả trước
+cash_flow,(increase)/decrease_in_receivables,(Tăng)/giảm các khoản phải thu
+cash_flow,(increase)/decrease_in_trading_securities,(Tăng)/giảm chứng khoán kinh doanh
+cash_flow,amortization_of_goodwill,Phân bổ lợi thế thương mại
+cash_flow,cash_and_cash_equivalents_at_the_beginning_of_period,Tiền và tương đương tiền đầu kỳ
+cash_flow,cash_and_cash_equivalents_at_the_end_of_period,Tiền và tương đương tiền cuối kỳ
+cash_flow,"collection_of_loans,_proceeds_from_sales_of_debts_instruments","Tiền thu hồi cho vay, bán lại các công cụ nợ của đơn vị khác"
+cash_flow,corporate_income_tax_paid,Thuế thu nhập doanh nghiệp đã nộp
+cash_flow,depreciation_and_amortization,Khấu hao TSCĐ và BĐSĐT
+cash_flow,dividends_and_interest_received,"Tiền thu lãi cho vay, cổ tức và lợi nhuận được chia"
+cash_flow,dividends_paid,"Cổ tức, lợi nhuận đã trả cho chủ sở hữu"
+cash_flow,effect_of_foreign_exchange_differences,Ảnh hưởng của thay đổi tỷ giá hối đoái quy đổi ngoại tệ
+cash_flow,finance_lease_principal_payments,Tiền trả nợ gốc thuê tài chính
+cash_flow,increase/(decrease)_in_payables,Tăng/(giảm) các khoản phải trả
+cash_flow,interest_expense,Chi phí lãi vay
+cash_flow,interest_income_and_dividend,Thu lãi và cổ tức
+cash_flow,interest_paid,Tiền lãi vay đã trả
+cash_flow,"interests,_dividends,_profits_received",Tiền lãi đã nhận
+cash_flow,investments_in_other_entities,Tiền chi đầu tư góp vốn vào đơn vị khác
+cash_flow,"loans_granted,_purchases_of_debt_instruments","Tiền chi cho vay, mua các công cụ nợ của đơn vị khác"
+cash_flow,net_cash_inflows/(outflows)_from_financing_activities,Lưu chuyển tiền thuần từ hoạt động tài chính
+cash_flow,net_cash_inflows/(outflows)_from_investing_activities,Lưu chuyển tiền thuần từ hoạt động đầu tư
+cash_flow,net_cash_inflows/(outflows)_from_operating_activities,Lưu chuyển tiền tệ ròng từ các hoạt động sản xuất kinh doanh
+cash_flow,net_increase_in_cash_and_cash_equivalents,Lưu chuyển tiền thuần trong kỳ
+cash_flow,net_profit/(loss)_before_tax,Lợi nhuận/(lỗ) trước thuế
+cash_flow,operating_profit/(loss)_before_changes_in_working_capital,Lợi nhuận/(lỗ) từ hoạt động kinh doanh trước những thay đổi vốn lưu động
+cash_flow,other_adjustments,Các khoản điều chỉnh khác
+cash_flow,other_payments_on_operating_activities,Tiền chi khác cho hoạt động kinh doanh
+cash_flow,other_receipts_from_operating_activities,Tiền thu khác từ hoạt động kinh doanh
+cash_flow,payments_for_share_returns_and_repurchases,"Tiền chi trả vốn góp cho các chủ sở hữu, mua lại cổ phiếu của doanh nghiệp đã phát hành"
+cash_flow,proceeds_from_disposal_of_fixed_assets,"Tiền thu từ thanh lý, nhượng bán TSCĐ và các tài sản dài hạn khác"
+cash_flow,proceeds_from_divestment_in_other_entities,Tiền thu hồi đầu tư góp vốn vào đơn vị khác
+cash_flow,proceeds_from_issue_of_shares,"Tiền thu từ phát hành cổ phiếu, nhận vốn góp của chủ sở hữu"
+cash_flow,proceeds_from_loans,Tiền thu được các khoản đi vay
+cash_flow,profit/loss_from_investing_activities,(Lãi)/lỗ từ hoạt động đầu tư
+cash_flow,profit/loss_from_liquidating_fixed_assets,Lãi/(lỗ) từ thanh lý tài sản cố định
+cash_flow,provisions,Chi phí dự phòng
+cash_flow,purchases_of_fixed_assets_and_other_long_term_assets,"Tiền chi để mua sắm, xây dựng TSCĐ và các tài sản dài hạn khác"
+cash_flow,repayment_of_loans,Tiền trả nợ gốc vay
+cash_flow,unrealized_foreign_exchange_gain/(loss),Lãi/lỗ chênh lệch tỷ giá hối đoái do đánh giá lại các khoản mục tiền tệ có gốc ngoại tệ
+footnote,additions,Tăng trong kỳ
+footnote,advances,Tạm ứng
+footnote,advances_on_salary_during_the_period_of_taking_leave,Trích trước CP lương nghỉ phép
+footnote,bank_loans,Vay ngân hàng
+footnote,capital_contributed_by_other_entities,Vốn đầu tư của đối tượng khác
+footnote,capital_contributed_by_the_state,Vốn góp của nhà nước
+footnote,cash_and_cash_equivalents,Tiền và tương đương tiền
+footnote,cash_equivalents,Tiền và tương đương tiền
+footnote,cash_in_banks,Tiền gửi Ngân hàng
+footnote,cash_in_transit,Tiền đang chuyển
+footnote,cash_on_hand,Tiền mặt
+footnote,corporate_income_tax,Thuế TNDN
+footnote,cost_of_goods_manufactured_by_factors,Chi phí sản xuất theo yếu tố
+footnote,cost_of_sales,Giá vốn
+footnote,decreases,Giảm trong kỳ
+footnote,depreciation_expense,Chi phí khấu hao tài sản cố định
+footnote,dividends_income,"Cổ tức, lợi nhuận được chia"
+footnote,expenses_during_the_period_of_cessation_of_business_activities,Chi phí trong thời gian ngừng KD
+footnote,expenses_for_major_repair_to_fixed_assets,Chi phí SCL TSCĐ
+footnote,expenses_in_excess_of_normal_value,Các khoản chi phí vượt mức bình thường
+footnote,expenses_payable,Chi phí phải trả
+footnote,export_duty,Thuế xuất khẩu
+footnote,finance_lease_assets_-_accumulated_depreciation,Hao mòn TSCĐ TTC
+footnote,finance_lease_assets_-_historical_cost,Nguyên giá TSCĐ TTC
+footnote,financial_expenses,Chi phí tài chính
+footnote,financial_income,Doanh thu tài chính
+footnote,financially_leased_liabilities,Thuê tài chính
+footnote,finished_goods,Thành phẩm
+footnote,finished_goods_sold,Giá vốn thành phẩm đã bán
+footnote,gain_from_disposal_of_short-term_or_long-term_investments,"Lãi từ bán, thanh lý các khoản đầu tư"
+footnote,gain_on_disposal_of_securities,"Lãi đầu tư trái phiếu, kỳ phiếu, tín phiếu"
+footnote,gains_from_sale_of_deferred_payments_goods,Lãi bán hàng trả chậm
+footnote,gains_from_sale_of_foreign_currency,Lãi bán ngoại tệ
+footnote,good_will_-_accumulated_depreciation,Phân bổ Lũy kế
+footnote,good_will_-_historical_cost,Giá gốc Lợi thế thương mại
+footnote,goods_in_bonded_warehouses,Hàng hoá kho bảo thuế
+footnote,goods_in_transit,Hàng mua đang đi đường
+footnote,goods_on_consignment,Hàng gửi đi bán
+footnote,held-to-maturity_investment,Đầu tư nắm giữ đến ngày đáo hạn
+footnote,"housing_and_land_tax,_and_land_rental",Thuế nhà đất và tiền thuê đất
+footnote,import-export_tax,Thuế XNK
+footnote,intangible_fixed_assets_-_accumulated_amortization,Hao mòn TSCĐVH
+footnote,intangible_fixed_assets_-_historical_cost,Nguyên giá TSCĐVH
+footnote,interest_expenses_on_loans,Lãi tiền vay
+footnote,interest_income,Phải thu về cổ tức và lợi nhuận được chia
+footnote,interest_income_on_loans_and_deposits_granted,"Lãi tiền gửi, tiền cho vay"
+footnote,inventories,Hàng tồn kho
+footnote,inventories_deficiencies,"Hao hụt, mất mát hàng tồn kho"
+footnote,investment_in_bond,Đầu tư trái phiếu
+footnote,investment_in_securities,Đầu tư cổ phiếu
+footnote,"investments_in_bills_of_exchange,_treasury_bonds","Đầu tư tín phiếu, kỳ phiếu"
+footnote,issued_bonds,Trái phiếu phát hành
+footnote,labor_costs,Chi phí nhân công
+footnote,lack_of_assets_awaiting_handling,Tài sản thiếu chờ xử lý
+footnote,loans_from_other_lenders,Vay đối tượng khác
+footnote,loans_without_interest,Cho vay không có lãi
+footnote,long-term,Đầu tư dài hạn
+footnote,long-term_borrowings,Vay Dài hạn
+footnote,long-term_deposits_or_collateral,"Ký quỹ, ký cược dài hạn"
+footnote,long-term_liabilities_falling_due,Vay dài hạn đến hạn trả
+footnote,long-term_loans,Cho vay dài hạn
+footnote,loss_from_disposal_of_short-term_or_long-term_investments,"Lỗ do thanh lý các khoản đầu tư ngắn hạn, dài hạn"
+footnote,loss_from_sale_of_foreign_currency,Lỗ bán ngoại tệ
+footnote,medical_insurance,Bảo hiểm y tế
+footnote,merchandise_goods_sold,Giá vốn hàng hóa đã bán
+footnote,merchandise_inventories,Hàng hóa
+footnote,natural_resources_tax,Thuế Tài nguyên
+footnote,net_sales,Doanh thu
+footnote,opening_balance,Đầu kỳ
+footnote,opening_balance,Nguyên giá đầu kỳ
+footnote,opening_balance,Số dư đầu kỳ
+footnote,other,Khác
+footnote,other_cash_expenses,Chi phí khác bằng tiền
+footnote,other_current_assets,Tài sản ngắn hạn khác
+footnote,"other_fees,_charges","Các khoản phí, lệ phí khác"
+footnote,other_long-term_investments,Đầu tư dài hạn khác
+footnote,other_long-term_liabilities,Nợ dài hạn khác
+footnote,other_long-term_receivables,Phải thu dài hạn khác
+footnote,other_payables,Phải trả phải nộp khác
+footnote,other_receivables,Phải thu ngắn hạn khác
+footnote,other_receivables,Phải thu khác
+footnote,other_services_provided,Giá vốn của dịch vụ cung cấp
+footnote,other_short-term_investments,Đầu tư NH khác
+footnote,other_taxes,Các loại thuế khác
+footnote,others,Phải thu dài hạn khác
+footnote,others,Khác
+footnote,others,Chi phí tài chính khác
+footnote,others,Doanh thu hoạt động tài chính khác
+footnote,outside_service_expenses,Chi phí dịch vụ mua ngoài
+footnote,paid-in_capital,Vốn chủ sở hữu
+footnote,payables_regarding_equitization,Phải trả về CPH
+footnote,"payments_discount,_gains_from_sale_of_deferred_payments_goods","Chiết khấu thanh toán, lãi bán hàng trả chậm"
+footnote,personal_income_tax,Thuế TNCN
+footnote,property,Hàng hoá bất động sản
+footnote,provision/(reversal_of_provision)_for_the_decline_in_value_of_inventory,Dự phòng
+footnote,provision_for_diminution_in_value_of_short-term_investments,Dự phòng giảm giá ĐTNH
+footnote,provisions_for_reduction_in_price_of_short-term_or_long-term_investments,"Dự phòng giảm giá các khoản đầu tư ngắn hạn, dài hạn"
+footnote,raw_materials,"Chi phí nguyên liệu, vật liệu"
+footnote,raw_materials,"Nguyên liệu, vật liệu"
+footnote,real_estate_services_provided,"Giá trị còn lại, chi phí nhượng bán, Thanh lý BĐS đầu tư đã bán"
+footnote,realized_foreign_exchange_gains,Lãi chênh lệch tỷ giá đã thực hiện
+footnote,realized_foreign_exchange_losses,Lỗ chênh lệch tỷ giá đã thực hiện
+footnote,receipt_of_short-term_deposits_or_collateral,"Nhận ký quỹ, ký cược NH"
+footnote,receivable_from_employees,Phải thu người lao động
+footnote,receivables_from_equitization,Phải thu về cổ phần hóa
+footnote,reductions_in_prices_of_goods_sold,Giảm giá hàng bán
+footnote,sale_from_construction_contracts,Doanh thu hợp đồng xây dựng
+footnote,sale_from_services,Doanh thu cung cấp dịch vụ
+footnote,sales_of_merchandise_goods,Giảm trừ doanh thu
+footnote,sales_of_merchandise_goods,Doanh thu bán hàng
+footnote,sales_returns,Hàng bán bị trả lại
+footnote,short-term,Đầu tư ngắn hạn
+footnote,short-term_deposits_or_collateral,"Cầm cố, ký quỹ, ký cược NH"
+footnote,short-term_investments,Đầu tư tài chính NH
+footnote,short-term_loans,Vay ngắn hạn
+footnote,short-term_loans_and_liabilities,Vay và nợ ngắn hạn
+footnote,short-term_securities_investments,Chứng khoán đầu tư ngắn hạn
+footnote,social_insurance,Bảo hiểm xã hội
+footnote,special_sales_tax,Thuế tiêu thụ đặc biệt
+footnote,special_sales_tax_(sst),Thuế TTĐB
+footnote,sums_received_in_trust,Các khoản tiền nhận ủy thác
+footnote,surplus_assets_awaiting_handling,Tài sản thừa chờ XL
+footnote,tangible_fixed_assets_-_accumulated_depreciation,Hao mòn TSCĐHH
+footnote,tangible_fixed_assets_-_historical_cost,Nguyên giá TSCĐHH
+footnote,taxes_payable,Các khoản phải trả về Thuế
+footnote,tools_and_supplies,"Công cụ, dụng cụ"
+footnote,trade_discounts,Chiết khấu thương mại
+footnote,trade_expenses_of_invested_properties,Chi phí kinh doanh BĐS đầu tư
+footnote,trade_union_fees,Kinh phí công đoàn
+footnote,unemployment_insurance,Bảo hiểm thất nghiệp
+footnote,unrealized_foreign_exchange_gains,Lãi chênh lệch tỷ giá chưa thực hiện
+footnote,unrealized_foreign_exchange_losses,Lỗ chênh lệch tỷ giá chưa thực hiện
+footnote,unrealized_revenue,Doanh thu chưa thực hiện
+footnote,value_added_tax,Thuế GTGT
+footnote,vat_payable,Thuế GTGT phải nộp
+footnote,work_in_progress,"Chi phí SX, KD dở dang"
+income_statement,attributable_to_parent_company,Lợi nhuận của Cổ đông của Công ty mẹ
+income_statement,business_income_tax_-_current,Thuế thu nhập doanh nghiệp - hiện thời
+income_statement,business_income_tax_-_deferred,Thuế thu nhập doanh nghiệp - hoãn lại
+income_statement,corporate_income_tax_expenses,Chi phí thuế thu nhập doanh nghiệp
+income_statement,cost_of_sales,Giá vốn hàng bán
+income_statement,eps_basic_(vnd),Lãi cơ bản trên cổ phiếu (VND)
+income_statement,eps_diluted_(vnd),Lãi trên cổ phiếu pha loãng (VND)
+income_statement,financial_expenses,Chi phí tài chính
+income_statement,financial_income,Doanh thu hoạt động tài chính
+income_statement,gain/(loss)_from_joint_ventures_(from_2015),Lãi/(lỗ) từ công ty liên doanh (từ năm 2015)
+income_statement,general_and_admin_expenses,Chi phí quản lý doanh nghiệp
+income_statement,gross_profit,Lợi nhuận gộp
+income_statement,income_from_investments_in_other_entities,Lãi/(lỗ) từ công ty liên doanh
+income_statement,interest_expenses,Chi phí lãi vay
+income_statement,minority_interests,Lợi ích của cổ đông thiểu số
+income_statement,net_accounting_profit/(loss)_before_tax,Lãi/(lỗ) trước thuế
+income_statement,net_other_income/(expenses),"Thu nhập khác, ròng"
+income_statement,net_profit/(loss)_after_tax,Lãi/(lỗ) thuần sau thuế
+income_statement,net_sales,Doanh thu thuần
+income_statement,operating_profit/(loss),Lãi/(lỗ) từ hoạt động kinh doanh
+income_statement,other_expenses,Chi phí khác
+income_statement,other_incomes,Thu nhập khác
+income_statement,sales,Doanh thu bán hàng và cung cấp dịch vụ
+income_statement,sales_deductions,Các khoản giảm trừ doanh thu
+income_statement,selling_expenses,Chi phí bán hàng
+statistics,aftertaxprofitmargin,
+statistics,assetturnover,
+statistics,averagecostoffinancing,
+statistics,averageyieldonearningassets,
+statistics,bsb113,
+statistics,cashcycle,
+statistics,cashratio,
+statistics,cir,
+statistics,costtoincome,
+statistics,currentratio,
+statistics,daysaleoutstanding,
+statistics,daysinventoryoutstanding,
+statistics,dayspayableoutstanding,
+statistics,debtperequity,
+statistics,debttoequity,
+statistics,depositgrowth,
+statistics,dividendyield,
+statistics,ebit,
+statistics,ebitda,
+statistics,ebitmargin,
+statistics,equitytoliabilities,
+statistics,equitytoloans,
+statistics,evtoebitda,
+statistics,financialleverage,
+statistics,fixedassetturnover,
+statistics,grossmargin,
+statistics,ldrloandepositratio,
+statistics,loansgrowth,
+statistics,loanslossreservestonpls,
+statistics,loanslossreservetoloans,
+statistics,marketcap,
+statistics,netinterestmargin,
+statistics,nonandinterestincome,
+statistics,npl,
+statistics,numberofsharesmktcap,
+statistics,ownersequity,
+statistics,pb,
+statistics,pe,
+statistics,pretaxprofitmargin,
+statistics,pricetocashflow,
+statistics,provisiontooutstandingloans,
+statistics,ps,
+statistics,quickratio,
+statistics,roa,
+statistics,roe,
+statistics,roic,
+statistics,totalequitytotalasset,
