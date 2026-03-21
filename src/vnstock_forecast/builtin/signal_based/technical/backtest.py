@@ -1,4 +1,4 @@
-"""AnalysisBot – bot tổ hợp nhiều technique, tự động phân tích & ra Action."""
+"""SignalBasedBacktestBot – bot tổ hợp nhiều technique, tự động phân tích & ra Action."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Any, Optional
 from uuid import uuid4
 
-from vnstock_forecast.builtin.forecast.profile import SignalProfile
-from vnstock_forecast.builtin.forecast.signal import Signal
+from vnstock_forecast.builtin.signal_based.profile import SignalProfile
+from vnstock_forecast.builtin.signal_based.signal import Signal, SignalDirection
 from vnstock_forecast.engine.backtest.bot_base import Action, ActionType, BotBase
 from vnstock_forecast.engine.backtest.context import StepContext
 from vnstock_forecast.engine.shared.user_bridge import resolve_profile_dir
@@ -18,7 +18,7 @@ from .base import BaseTechnique
 logger = logging.getLogger(__name__)
 
 
-class AnalysisBot(BotBase):
+class SignalBasedBacktestBot(BotBase):
     """
     Bot phân tích kỹ thuật – tổ hợp N technique thành 1 bot.
 
@@ -42,14 +42,14 @@ class AnalysisBot(BotBase):
 
     Example::
 
-        bot = AnalysisBot(
+        bot = SignalBasedBacktestBot(
             name="RSI_MACD_Combo",
             techniques=[RSICrossover(period=14), MACDCrossover()],
             allocation=0.3,
         )
 
         # Tùy chỉnh logic lọc
-        class SmartBot(AnalysisBot):
+        class SmartBot(SignalBasedBacktestBot):
             def accept_signal(self, signal, ctx):
                 # Chỉ chấp nhận BUY khi confidence > 0.6
                 if signal.is_buy and signal.confidence < 0.6:
@@ -59,13 +59,14 @@ class AnalysisBot(BotBase):
 
     def __init__(
         self,
-        name: str = "AnalysisBot",
+        name: str = "SignalBasedBacktestBot",
         description: str = "Bot tổ hợp techniques",
         techniques: Optional[list[BaseTechnique]] = None,
         allocation: float = 0.1,
         sl_pct: float = 0.07,
         tp_pct: float = 0.10,
         profiles: Optional[dict[str, SignalProfile]] = None,
+        emit_sl_tp_signals: bool = False,
     ) -> None:
         """
         Args:
@@ -76,6 +77,9 @@ class AnalysisBot(BotBase):
             sl_pct:      Stop loss mặc định (%) nếu Signal không có TradePlan.
             tp_pct:      Take profit mặc định (%) nếu Signal không có TradePlan.
             profiles:    Dict profile đã load. ``None`` = không dùng profile.
+            emit_sl_tp_signals:
+                         ``True``: bot tự phát SELL signal khi chạm SL/TP
+                         (dùng khi engine tắt auto_manage_sl_tp).
 
         Note:
             Ngưỡng confidence được cấu hình trực tiếp trên từng technique
@@ -90,6 +94,7 @@ class AnalysisBot(BotBase):
         self.sl_pct = sl_pct
         self.tp_pct = tp_pct
         self.profiles = profiles or {}
+        self.emit_sl_tp_signals = emit_sl_tp_signals
 
         # Lịch sử signal (ghi lại để profiler phân tích sau)
         self.signal_history: list[Signal] = []
@@ -104,6 +109,9 @@ class AnalysisBot(BotBase):
         # Theo dõi signal BUY đang mở theo symbol (để nối với SELL sau này)
         self._active_entry_signal_by_symbol: dict[str, str] = {}
 
+        # Đồng bộ lookback của từng technique để snapshot luôn đủ dữ liệu.
+        self.sync_technique_lookbacks()
+
     # ------------------------------------------------------------------
     #  Technique management
     # ------------------------------------------------------------------
@@ -111,6 +119,31 @@ class AnalysisBot(BotBase):
     def add_technique(self, technique: BaseTechnique) -> None:
         """Thêm technique vào bot."""
         self.techniques.append(technique)
+        self._sync_snapshot_lookback_for_technique(technique)
+
+    def max_required_lookback(self) -> int:
+        """Lấy required_lookback lớn nhất trong tất cả techniques."""
+        if not self.techniques:
+            return 1
+        return max(
+            int(getattr(t, "required_lookback", 1) or 1) for t in self.techniques
+        )
+
+    def sync_technique_lookbacks(self) -> None:
+        """
+        Đồng bộ ``snapshot_lookback`` theo ``required_lookback`` cho từng technique.
+
+        Quy tắc:
+        - ``snapshot_lookback`` của mỗi technique luôn >= 1.
+        - Gán trực tiếp bằng ``required_lookback`` của chính technique đó.
+        """
+        for technique in self.techniques:
+            self._sync_snapshot_lookback_for_technique(technique)
+
+    @staticmethod
+    def _sync_snapshot_lookback_for_technique(technique: BaseTechnique) -> None:
+        required = int(getattr(technique, "required_lookback", 1) or 1)
+        technique.snapshot_lookback = max(1, required)
 
     def load_profiles(self, directory: str | Path | None = None) -> None:
         """
@@ -141,6 +174,10 @@ class AnalysisBot(BotBase):
         """
         # 1) Thu thập signals từ tất cả techniques
         all_signals = self._collect_signals(ctx)
+
+        # 1.1) Tạo SELL signal từ SL/TP nếu bật chế độ bot tự quản trị thoát lệnh
+        if self.emit_sl_tp_signals:
+            all_signals.extend(self._collect_sl_tp_exit_signals(ctx))
 
         # 2) Gắn confidence từ profile (nếu có)
         all_signals = self._enrich_with_profiles(all_signals)
@@ -186,6 +223,63 @@ class AnalysisBot(BotBase):
     # ------------------------------------------------------------------
     #  Internal
     # ------------------------------------------------------------------
+
+    def _collect_sl_tp_exit_signals(self, ctx: StepContext) -> list[Signal]:
+        """Phát SELL signal cho symbol có vị thế sellable chạm SL/TP ở bar hiện tại."""
+        signals: list[Signal] = []
+
+        portfolio = getattr(ctx, "_portfolio", None)
+        settlement_days = getattr(portfolio, "settlement_days", 0)
+
+        # Chỉ duyệt các vị thế đang mở thay vì quét toàn bộ symbols mỗi bar.
+        # touched_by_symbol: symbol -> {position_id -> {reason, price}}
+        touched_by_symbol: dict[str, dict[str, dict[str, Any]]] = {}
+        bar_cache: dict[str, tuple[float, float]] = {}
+
+        for pos in ctx.positions:
+            if not pos.can_sell(ctx.timestamp, settlement_days):
+                continue
+
+            symbol = pos.symbol_
+            if symbol not in bar_cache:
+                try:
+                    bar = ctx.latest(symbol)
+                except ValueError:
+                    continue
+                bar_cache[symbol] = (float(bar["High"]), float(bar["Low"]))
+
+            high, low = bar_cache[symbol]
+
+            if pos.stop_loss is not None and low <= float(pos.stop_loss):
+                touched_by_symbol.setdefault(symbol, {})[pos.id] = {
+                    "reason": "stop_loss",
+                    "price": float(pos.stop_loss),
+                }
+            elif pos.take_profit is not None and high >= float(pos.take_profit):
+                touched_by_symbol.setdefault(symbol, {})[pos.id] = {
+                    "reason": "take_profit",
+                    "price": float(pos.take_profit),
+                }
+
+        for symbol, touched in touched_by_symbol.items():
+            has_sl = any(info["reason"] == "stop_loss" for info in touched.values())
+            exit_reason = "stop_loss" if has_sl else "take_profit"
+            signal = Signal(
+                technique="risk_manager",
+                symbol=symbol,
+                direction=SignalDirection.SELL,
+                timestamp=ctx.timestamp,
+                confidence=1.0,
+                reason=f"Auto {exit_reason} at bar {ctx.timestamp}",
+                metadata={
+                    "source": "sl_tp_monitor",
+                    "exit_reason": exit_reason,
+                    "touched_positions": touched,
+                },
+            )
+            signals.append(signal)
+
+        return signals
 
     def _collect_signals(self, ctx: StepContext) -> list[Signal]:
         """Gọi analyze_step() cho mọi technique × mọi symbol.
@@ -323,6 +417,20 @@ class AnalysisBot(BotBase):
         if not sellable:
             return []
 
+        is_sl_tp_monitor_signal = (
+            isinstance(signal.metadata, dict)
+            and signal.metadata.get("source") == "sl_tp_monitor"
+        )
+        touched_positions: dict[str, dict[str, Any]] = {}
+        if is_sl_tp_monitor_signal:
+            raw_touched = signal.metadata.get("touched_positions")
+            if isinstance(raw_touched, dict):
+                touched_positions = {
+                    str(pid): info
+                    for pid, info in raw_touched.items()
+                    if isinstance(info, dict)
+                }
+
         signal.metadata["exit_time"] = ctx.timestamp
         signal.metadata["exit_price"] = ctx.price(signal.symbol)
         if signal.snapshot is not None:
@@ -338,11 +446,22 @@ class AnalysisBot(BotBase):
 
         sell_actions: list[Action] = []
         for pos in sellable:
+            if is_sl_tp_monitor_signal and pos.id not in touched_positions:
+                continue
+
+            action_price: Optional[float] = None
+            if is_sl_tp_monitor_signal:
+                info = touched_positions.get(pos.id, {})
+                raw_price = info.get("price") if isinstance(info, dict) else None
+                if isinstance(raw_price, (int, float)):
+                    action_price = float(raw_price)
+
             action_id = self._new_action_id()
             action = Action(
                 type=ActionType.SELL,
                 symbol=signal.symbol,
                 quantity=pos.quantity,
+                price=action_price,
                 position_id=pos.id,
                 reason=self._compose_reason(signal, action_id),
             )

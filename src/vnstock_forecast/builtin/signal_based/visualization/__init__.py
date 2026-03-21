@@ -1,4 +1,4 @@
-"""vnstock_forecast.builtin.forecast.visualization – plot & persist signals."""
+"""vnstock_forecast.builtin.signal_based.visualization – plot & persist signals."""
 
 from .plotter import plot_signal
 from .snapshot import (

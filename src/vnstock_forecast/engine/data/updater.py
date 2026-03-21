@@ -31,7 +31,11 @@ import vnstock_forecast.config  # noqa: F401 — registers ${symbols:...} resolv
 from vnstock_forecast.engine.client.vietcap.financial import FinancialReport
 from vnstock_forecast.engine.client.vietstock import OHLCV
 from vnstock_forecast.engine.schemas import UpdaterConfig
-from vnstock_forecast.engine.schemas.data import DataClient
+from vnstock_forecast.engine.schemas.data import (
+    DataClient,
+    FinancialUpdaterConfig,
+    OhlcvUpdaterConfig,
+)
 from vnstock_forecast.engine.shared.path import CONFIG_PATH_STR, DATA_PATH_STR
 from vnstock_forecast.engine.utils import time_utils
 
@@ -370,6 +374,39 @@ def update(cfg: UpdaterConfig) -> bool:
         total_fail,
     )
     return total_fail == 0
+
+
+def update_ohlcv(
+    symbols: list[str] | str,
+    resolutions: list[str] | str,
+    lookback_days: int = 365,
+) -> tuple[int, int]:
+    """
+    Public helper để chỉ cập nhật OHLCV cho danh sách symbol/resolution.
+
+    Returns:
+        Tuple ``(success_count, fail_count)``.
+    """
+    symbols_list = [symbols] if isinstance(symbols, str) else list(symbols)
+    resolutions_list = (
+        [resolutions] if isinstance(resolutions, str) else list(resolutions)
+    )
+
+    cfg = UpdaterConfig(
+        ohlcv=OhlcvUpdaterConfig(
+            update=True,
+            client=DataClient.vietstock,
+            symbols=symbols_list,
+            resolutions=resolutions_list,
+            lookback_days=lookback_days,
+        ),
+        financial=FinancialUpdaterConfig(
+            update=False,
+            client=DataClient.vietcap,
+            symbols=[],
+        ),
+    )
+    return _update_ohlcv(cfg)
 
 
 @hydra.main(version_base=None, config_path=CONFIG_PATH_STR, config_name="config")

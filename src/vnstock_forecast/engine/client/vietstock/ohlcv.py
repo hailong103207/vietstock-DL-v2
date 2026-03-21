@@ -51,6 +51,9 @@ class OHLCV:
         Raise:
             requests.RequestException: If the API request fails.
         """
+        print(
+            f"Fetching OHLCV for {ticker} from {from_ts} to {to_ts} at resolution {resolution}"
+        )
         params = {
             "symbol": ticker,
             "resolution": resolution,

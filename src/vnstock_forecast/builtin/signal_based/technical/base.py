@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING, Any, Optional
 
 import pandas as pd
 
-from vnstock_forecast.builtin.forecast.signal import Signal
+from vnstock_forecast.builtin.signal_based.signal import Signal
 
 if TYPE_CHECKING:
-    from vnstock_forecast.builtin.forecast.visualization.snapshot import (
+    from vnstock_forecast.builtin.signal_based.visualization.snapshot import (
         PlotOverlays,
         SignalSnapshot,
     )
@@ -25,7 +25,7 @@ class BaseTechnique(ABC):
     Mỗi technique cần implement:
 
     - ``analyze_step(ctx, symbol)`` – phân tích tại 1 bar (incremental).
-      Được gọi mỗi bước bởi ``AnalysisBot``.
+      Được gọi mỗi bước bởi ``SignalBasedBacktestBot``.
 
     Tùy chọn override:
 
@@ -34,7 +34,7 @@ class BaseTechnique(ABC):
     - ``required_lookback`` – số bars tối thiểu cần để phân tích.
     - ``params`` – dict tham số kỹ thuật (dùng cho profiling / logging).
 
-    Lifecycle trong AnalysisBot::
+    Lifecycle trong SignalBasedBacktestBot::
 
         for symbol in ctx.symbols:
             for technique in self.techniques:
@@ -95,7 +95,7 @@ class BaseTechnique(ABC):
         """
         Phân tích tại bar hiện tại (incremental mode).
 
-        Được gọi mỗi bước bởi ``AnalysisBot.on_step()``.
+        Được gọi mỗi bước bởi ``SignalBasedBacktestBot.on_step()``.
         Chỉ sử dụng dữ liệu từ ``ctx`` – không future data leak.
 
         Args:
@@ -143,7 +143,7 @@ class BaseTechnique(ABC):
         Returns:
             ``PlotOverlays`` chứa indicator lines, hlines, v.v.
         """
-        from vnstock_forecast.builtin.forecast.visualization.snapshot import (
+        from vnstock_forecast.builtin.signal_based.visualization.snapshot import (
             PlotOverlays,
         )
 
@@ -176,7 +176,7 @@ class BaseTechnique(ABC):
         Returns:
             ``SignalSnapshot`` sẵn sàng gắn vào ``signal.snapshot``.
         """
-        from vnstock_forecast.builtin.forecast.visualization.snapshot import (
+        from vnstock_forecast.builtin.signal_based.visualization.snapshot import (
             SignalSnapshot,
         )
 

@@ -199,6 +199,8 @@ class SignalSnapshot:
     take_profit: Optional[float] = None
     exit_price: Optional[float] = None
     exit_time: Optional[datetime] = None
+    buy_points: list[tuple[datetime, float]] = field(default_factory=list)
+    sell_points: list[tuple[datetime, float]] = field(default_factory=list)
     signal_time: Optional[datetime] = None
     time_limit: Optional[datetime] = None
     resolution: str = "D"

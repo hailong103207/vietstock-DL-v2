@@ -1,4 +1,4 @@
-"""vnstock_forecast.builtin.forecast – analysis, strategies, profiling & forecasting."""
+"""vnstock_forecast.builtin.signal_based – analysis, strategies, profiling & forecasting."""
 
 from .profile import SignalProfile
 from .profiler import Profiler

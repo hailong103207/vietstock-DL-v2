@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime
 import logging
 from typing import TYPE_CHECKING, Optional
 
@@ -13,7 +14,7 @@ import pandas as pd
 from .snapshot import SignalSnapshot
 
 if TYPE_CHECKING:
-    from vnstock_forecast.builtin.forecast.signal import Signal
+    from vnstock_forecast.builtin.signal_based.signal import Signal
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,18 @@ def _ensure_datetime_index(df: pd.DataFrame) -> pd.DataFrame:
             df.index = pd.to_datetime(df.index)
     df.index.name = "Date"
     return df
+
+
+def _ensure_datetime_series_index(series: pd.Series) -> pd.Series:
+    """Đảm bảo Series có ``DatetimeIndex`` để align với OHLCV khi plot."""
+    out = series.copy()
+    if not isinstance(out.index, pd.DatetimeIndex):
+        try:
+            out.index = pd.to_datetime(out.index, unit="s")
+        except Exception:
+            out.index = pd.to_datetime(out.index)
+    out.index.name = "Date"
+    return out
 
 
 def _ts_to_bar_idx(ohlcv: pd.DataFrame, ts: pd.Timestamp) -> int:
@@ -221,7 +234,8 @@ def plot_signal(
     # --- 2) Build addplots cho indicators ---
     addplots: list[dict] = []
     for ind in snapshot.indicators:
-        aligned = ind.data.reindex(ohlcv.index)
+        ind_data = _ensure_datetime_series_index(ind.data)
+        aligned = ind_data.reindex(ohlcv.index)
         kwargs: dict = dict(
             panel=ind.panel,
             color=ind.color,
@@ -333,10 +347,30 @@ def plot_signal(
         ax_main.fill_between(x_fill, tp_lo, tp_hi, alpha=0.06, color="green")
 
     # --- 5) BUY/SELL markers ---
-    if entry_idx is not None and entry_price is not None:
+    buy_points: list[tuple[datetime, float]] = list(snapshot.buy_points)
+    if not buy_points and entry_time is not None and entry_price is not None:
+        buy_points = [(entry_time, float(entry_price))]
+
+    sell_points: list[tuple[datetime, float]] = list(snapshot.sell_points)
+    if not sell_points and exit_time is not None and exit_price is not None:
+        sell_points = [(exit_time, float(exit_price))]
+
+    buy_plot_points: list[tuple[int, float]] = []
+    for ts, price in buy_points:
+        idx = _ts_to_bar_idx(ohlcv, pd.Timestamp(ts))
+        buy_plot_points.append((idx, float(price)))
+
+    sell_plot_points: list[tuple[int, float]] = []
+    for ts, price in sell_points:
+        idx = _ts_to_bar_idx(ohlcv, pd.Timestamp(ts))
+        sell_plot_points.append((idx, float(price)))
+
+    if buy_plot_points:
+        buy_x = [point[0] for point in buy_plot_points]
+        buy_y = [point[1] for point in buy_plot_points]
         ax_main.scatter(
-            [entry_idx],
-            [entry_price],
+            buy_x,
+            buy_y,
             marker="^",
             s=85,
             color="#1E88E5",
@@ -345,20 +379,23 @@ def plot_signal(
             zorder=6,
             label="Buy",
         )
+        first_buy_idx, first_buy_price = buy_plot_points[0]
         ax_main.annotate(
             " BUY",
-            xy=(entry_idx, entry_price),
-            xytext=(max(0, entry_idx - 2), entry_price * 1.012),
+            xy=(first_buy_idx, first_buy_price),
+            xytext=(max(0, first_buy_idx - 2), first_buy_price * 1.012),
             fontsize=8,
             fontweight="bold",
             color="#1E88E5",
             arrowprops=dict(arrowstyle="->", color="#1E88E5", lw=1.2),
         )
 
-    if exit_idx is not None and exit_price is not None:
+    if sell_plot_points:
+        sell_x = [point[0] for point in sell_plot_points]
+        sell_y = [point[1] for point in sell_plot_points]
         ax_main.scatter(
-            [exit_idx],
-            [exit_price],
+            sell_x,
+            sell_y,
             marker="v",
             s=85,
             color="#E53935",
@@ -367,10 +404,11 @@ def plot_signal(
             zorder=6,
             label="Sell",
         )
+        last_sell_idx, last_sell_price = sell_plot_points[-1]
         ax_main.annotate(
             " SELL",
-            xy=(exit_idx, exit_price),
-            xytext=(max(0, exit_idx - 2), exit_price * 0.988),
+            xy=(last_sell_idx, last_sell_price),
+            xytext=(max(0, last_sell_idx - 2), last_sell_price * 0.988),
             fontsize=8,
             fontweight="bold",
             color="#E53935",

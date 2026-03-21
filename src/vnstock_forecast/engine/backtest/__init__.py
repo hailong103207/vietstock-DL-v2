@@ -36,15 +36,17 @@ giống nhau – chỉ cần thay nguồn dữ liệu real-time phía sau
 ``StepContext``.
 """
 
+from .backtest import BacktestEngine
 from .bot_base import Action, ActionType, BotBase
 from .context import StepContext
-from .engine import BacktestEngine
+from .core import EngineCore
 from .manual_bot import ManualBot
 from .portfolio import CloseReason, Portfolio, Position, TradeEvent
 from .report import BacktestReport
 
 __all__ = [
     "BacktestEngine",
+    "EngineCore",
     "BotBase",
     "Action",
     "ActionType",

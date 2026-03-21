@@ -9,7 +9,9 @@ from typing import TYPE_CHECKING, Any, Optional
 from uuid import uuid4
 
 if TYPE_CHECKING:
-    from vnstock_forecast.builtin.forecast.visualization.snapshot import SignalSnapshot
+    from vnstock_forecast.builtin.signal_based.visualization.snapshot import (
+        SignalSnapshot,
+    )
 
 
 class SignalDirection(Enum):

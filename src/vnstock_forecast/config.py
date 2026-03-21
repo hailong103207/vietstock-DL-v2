@@ -82,6 +82,21 @@ OmegaConf.register_new_resolver("symbols", _symbols_resolver, replace=True)
 # ---------------------------------------------------------------------------
 
 
+def list_symbols_lists() -> List[str]:
+    """List all available symbol list keys from discovery directory."""
+    symbols_dir = get_project_root() / _SYMBOLS_DIR
+    if not symbols_dir.exists():
+        return []
+    return sorted({yaml_file.stem.lower() for yaml_file in symbols_dir.rglob("*.yaml")})
+
+
+def search_symbols_lists(query: str) -> List[str]:
+    """Search symbol list keys that contain the query string."""
+    all_lists = list_symbols_lists()
+    query_lower = query.lower()
+    return [key for key in all_lists if query_lower in key]
+
+
 def query_symbols_list(symbols_list_names: str | List[str]) -> List[str]:
     """Query symbol list from discovery directory."""
     symbols_dir = get_project_root() / _SYMBOLS_DIR

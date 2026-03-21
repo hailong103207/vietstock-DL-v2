@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-from vnstock_forecast.builtin.forecast.signal import Signal, SignalDirection
+from vnstock_forecast.builtin.signal_based.signal import Signal, SignalDirection
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class SignalStore:
         sig = store.load(sid)
 
         # Plot trực tiếp
-        from vnstock_forecast.builtin.forecast.visualization import plot_signal
+        from vnstock_forecast.builtin.signal_based.visualization import plot_signal
         plot_signal(sig)
     """
 

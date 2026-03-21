@@ -4,7 +4,7 @@ tính toán SignalProfile, lưu ra local.
 
 Usage::
 
-    from vnstock_forecast.builtin.forecast.profiler import Profiler
+    from vnstock_forecast.builtin.signal_based.profiler import Profiler
 
     profiler = Profiler()
     profiles = profiler.run(
@@ -21,7 +21,7 @@ Usage::
     profiler.save()
 
     # Hoặc profile technique cụ thể
-    from vnstock_forecast.builtin.forecast.strategies import RSICrossover
+    from vnstock_forecast.builtin.signal_based.strategies import RSICrossover
     profiler.run_single(
         technique=RSICrossover(period=14),
         data={"VNM": df_vnm},
@@ -38,11 +38,13 @@ from typing import Any, Optional, Protocol
 
 import pandas as pd
 
-from vnstock_forecast.builtin.forecast.technical.bot import AnalysisBot  # noqa: F401
+from vnstock_forecast.builtin.signal_based.technical.backtest import (  # noqa: F401
+    SignalBasedBacktestBot,
+)
+from vnstock_forecast.engine.backtest.backtest import BacktestEngine
 from vnstock_forecast.engine.backtest.bot_base import Action  # noqa: F401
 from vnstock_forecast.engine.backtest.bot_base import ActionType  # noqa: F401
 from vnstock_forecast.engine.backtest.context import StepContext  # noqa: F401
-from vnstock_forecast.engine.backtest.engine import BacktestEngine
 from vnstock_forecast.engine.backtest.portfolio import CloseReason
 from vnstock_forecast.engine.backtest.report import BacktestReport
 from vnstock_forecast.engine.shared.user_bridge import resolve_profile_dir
@@ -67,7 +69,7 @@ class TechniqueLike(Protocol):
     def analyze_step(self, ctx: StepContext, symbol: str) -> list[Signal]: ...
 
 
-class _ProfilerTechniqueBot(AnalysisBot):
+class _ProfilerTechniqueBot(SignalBasedBacktestBot):
     """Internal bot wrapper used by profiler for one technique."""
 
     def __init__(
@@ -101,7 +103,7 @@ class ProfileResult:
     report: BacktestReport
     signals: list[Signal]
     technique: Any
-    bot: AnalysisBot
+    bot: SignalBasedBacktestBot
 
 
 class Profiler:
@@ -110,7 +112,7 @@ class Profiler:
 
     Quy trình cho mỗi technique:
 
-    1. Tạo ``AnalysisBot`` wrapper chỉ chứa 1 technique.
+    1. Tạo ``SignalBasedBacktestBot`` wrapper chỉ chứa 1 technique.
     2. Chạy ``BacktestEngine.run()`` để backtest.
     3. Phân tích signal_history của bot + kết quả backtest.
     4. Tính ``DirectionStats`` cho BUY và SELL.
@@ -367,7 +369,7 @@ class Profiler:
     def _compute_profile(
         self,
         technique: Any,
-        bot: AnalysisBot,
+        bot: SignalBasedBacktestBot,
         report: BacktestReport,
         data: dict[str, pd.DataFrame],
     ) -> SignalProfile:
