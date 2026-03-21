@@ -10,7 +10,7 @@ chứa::
 
 Usage điển hình trong một technique::
 
-    from vnstock_forecast.builtin.forecast.technical.confirmations import (
+    from vnstock_forecast.builtin.signal_based.technical.confirmations import (
         apply_confirmations,
         check_volume_surge,
         check_breakout_resistance,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from vnstock_forecast.builtin.forecast import PlotOverlays
+from vnstock_forecast.builtin.signal_based import PlotOverlays
 
 
 def compute_macd(
@@ -58,7 +58,7 @@ def macd_overlays(
     Returns:
         ``PlotOverlays`` chứa indicator lines + hline zero.
     """
-    from vnstock_forecast.builtin.forecast.visualization.snapshot import (
+    from vnstock_forecast.builtin.signal_based.visualization.snapshot import (
         HLine,
         IndicatorLine,
         PlotOverlays,

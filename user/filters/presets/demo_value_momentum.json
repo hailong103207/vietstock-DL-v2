@@ -1,0 +1,21 @@
+{
+  "name": "demo_value_momentum",
+  "description": "Demo preset from notebook",
+  "rules": [
+    {
+      "type": "string",
+      "name": "value_quality_demo",
+      "description": "PE thấp, ROE tốt, giá trên SMA20",
+      "tags": [],
+      "expression": "close > 100"
+    },
+    {
+      "type": "function",
+      "name": "momentum_code_demo",
+      "description": "Động lượng không quá nóng + volume cải thiện",
+      "tags": [],
+      "module_path": "__main__",
+      "qualname": "momentum_code_rule"
+    }
+  ]
+}

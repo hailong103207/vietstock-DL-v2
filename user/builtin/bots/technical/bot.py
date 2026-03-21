@@ -1,5 +1,8 @@
-"""Compatibility layer for AnalysisBot (moved to builtin.forecast.technical)."""
+"""Compatibility layer for SignalBasedBacktestBot (moved to builtin.forecast.technical)."""
 
-from vnstock_forecast.builtin.forecast.technical.bot import AnalysisBot
+from vnstock_forecast.builtin.signal_based.technical.backtest import (
+    SignalBasedBacktestBot,
+)
 
-__all__ = ["AnalysisBot"]
+__all__ = ["SignalBasedBacktestBot"]
+__all__ = ["SignalBasedBacktestBot"]

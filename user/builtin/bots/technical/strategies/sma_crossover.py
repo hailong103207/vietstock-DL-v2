@@ -6,9 +6,13 @@ from typing import Any
 
 import pandas as pd
 
-from vnstock_forecast.builtin.forecast.registry import register
-from vnstock_forecast.builtin.forecast.signal import Signal, SignalDirection, TradePlan
-from vnstock_forecast.builtin.forecast.technical import BaseTechnique
+from vnstock_forecast.builtin.signal_based.registry import register
+from vnstock_forecast.builtin.signal_based.signal import (
+    Signal,
+    SignalDirection,
+    TradePlan,
+)
+from vnstock_forecast.builtin.signal_based.technical import BaseTechnique
 from vnstock_forecast.engine.backtest.context import StepContext
 
 from ..indicators.sma import sma_overlays
@@ -149,7 +153,11 @@ class SMACrossover(BaseTechnique):
             prev_sma = sma.iloc[i - 1]
             curr_sma = sma.iloc[i]
             price = float(curr_close)
-            timestamp = pd.Timestamp(df.index[i]).to_pydatetime()
+            raw_ts = df.index[i]
+            ts = pd.to_datetime(raw_ts, unit="s", errors="coerce")
+            if pd.isna(ts):
+                ts = pd.to_datetime(raw_ts)
+            timestamp = ts.floor("us").to_pydatetime()
 
             # BUY
             if prev_close <= prev_sma and curr_close > curr_sma:

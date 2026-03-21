@@ -6,9 +6,13 @@ from typing import Any, Optional
 
 import pandas as pd
 
-from vnstock_forecast.builtin.forecast.registry import register
-from vnstock_forecast.builtin.forecast.signal import Signal, SignalDirection, TradePlan
-from vnstock_forecast.builtin.forecast.technical import BaseTechnique
+from vnstock_forecast.builtin.signal_based.registry import register
+from vnstock_forecast.builtin.signal_based.signal import (
+    Signal,
+    SignalDirection,
+    TradePlan,
+)
+from vnstock_forecast.builtin.signal_based.technical import BaseTechnique
 from vnstock_forecast.engine.backtest.context import StepContext
 
 from ..confirmations import (
@@ -107,7 +111,7 @@ class SMAShortCrossover(BaseTechnique):
         short_overlay = sma_overlays(df["Close"], self.short_period, color="#FF9800")
         long_overlay = sma_overlays(df["Close"], self.long_period, color="#2196F3")
         # Gộp indicator lists
-        from vnstock_forecast.builtin.forecast.visualization.snapshot import (
+        from vnstock_forecast.builtin.signal_based.visualization.snapshot import (
             PlotOverlays,
         )
 
@@ -205,7 +209,11 @@ class SMAShortCrossover(BaseTechnique):
         signals: list[Signal] = []
         for i in range(self.required_lookback, len(df)):
             sub = df.iloc[: i + 1]
-            timestamp = pd.Timestamp(df.index[i]).to_pydatetime()
+            raw_ts = df.index[i]
+            ts = pd.to_datetime(raw_ts, unit="s", errors="coerce")
+            if pd.isna(ts):
+                ts = pd.to_datetime(raw_ts)
+            timestamp = ts.floor("us").to_pydatetime()
             price = float(df["Close"].iloc[i])
             batch_signals = self._detect(sub, symbol, timestamp, price)
             if self.attach_snapshot:

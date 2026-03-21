@@ -6,9 +6,13 @@ from typing import Any
 
 import pandas as pd
 
-from vnstock_forecast.builtin.forecast.registry import register
-from vnstock_forecast.builtin.forecast.signal import Signal, SignalDirection, TradePlan
-from vnstock_forecast.builtin.forecast.technical import BaseTechnique
+from vnstock_forecast.builtin.signal_based.registry import register
+from vnstock_forecast.builtin.signal_based.signal import (
+    Signal,
+    SignalDirection,
+    TradePlan,
+)
+from vnstock_forecast.builtin.signal_based.technical import BaseTechnique
 from vnstock_forecast.engine.backtest.context import StepContext
 
 from ..indicators.macd import compute_macd, macd_overlays
@@ -116,7 +120,7 @@ class MACDCrossover(BaseTechnique):
                         entry=price,
                         stop_loss=round(price * (1 - self.sl_pct), 2),
                         take_profit=round(price * (1 + self.tp_pct), 2),
-                        max_holding_days=15,
+                        max_holding_days=self.max_holding_days,
                     ),
                     confidence=0.55,
                     reason=f"MACD({self.fast_period},{self.slow_period},{self.signal_period}) "  # noqa: E501
@@ -182,7 +186,11 @@ class MACDCrossover(BaseTechnique):
             prev_hist = histogram.iloc[i - 1]
             curr_hist = histogram.iloc[i]
             price = float(closes.iloc[i])
-            timestamp = pd.Timestamp(df.index[i]).to_pydatetime()
+            raw_ts = df.index[i]
+            ts = pd.to_datetime(raw_ts, unit="s", errors="coerce")
+            if pd.isna(ts):
+                ts = pd.to_datetime(raw_ts)
+            timestamp = ts.floor("us").to_pydatetime()
 
             # BUY
             if prev_hist <= 0 and curr_hist > 0:

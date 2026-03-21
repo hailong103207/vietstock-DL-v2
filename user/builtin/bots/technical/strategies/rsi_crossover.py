@@ -6,9 +6,13 @@ from typing import Any
 
 import pandas as pd
 
-from vnstock_forecast.builtin.forecast.registry import register
-from vnstock_forecast.builtin.forecast.signal import Signal, SignalDirection, TradePlan
-from vnstock_forecast.builtin.forecast.technical import BaseTechnique
+from vnstock_forecast.builtin.signal_based.registry import register
+from vnstock_forecast.builtin.signal_based.signal import (
+    Signal,
+    SignalDirection,
+    TradePlan,
+)
+from vnstock_forecast.builtin.signal_based.technical import BaseTechnique
 from vnstock_forecast.engine.backtest.context import StepContext
 
 from ..indicators.rsi import compute_rsi, rsi_overlays
@@ -158,7 +162,11 @@ class RSICrossover(BaseTechnique):
             prev_rsi = rsi.iloc[i - 1]
             curr_rsi = rsi.iloc[i]
             price = float(closes.iloc[i])
-            timestamp = pd.Timestamp(df.index[i]).to_pydatetime()
+            raw_ts = df.index[i]
+            ts = pd.to_datetime(raw_ts, unit="s", errors="coerce")
+            if pd.isna(ts):
+                ts = pd.to_datetime(raw_ts)
+            timestamp = ts.floor("us").to_pydatetime()
 
             # BUY
             if prev_rsi <= self.oversold and curr_rsi > self.oversold:

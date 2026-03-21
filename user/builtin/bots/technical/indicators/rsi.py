@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from vnstock_forecast.builtin.forecast import PlotOverlays
+from vnstock_forecast.builtin.signal_based import PlotOverlays
 
 
 def compute_rsi(closes: pd.Series, period: int = 14) -> pd.Series:
@@ -53,7 +53,7 @@ def rsi_overlays(
     Returns:
         ``PlotOverlays`` chứa indicator lines + hlines.
     """
-    from vnstock_forecast.builtin.forecast.visualization.snapshot import (
+    from vnstock_forecast.builtin.signal_based.visualization.snapshot import (
         HLine,
         IndicatorLine,
         PlotOverlays,
